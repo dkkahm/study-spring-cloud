@@ -7,11 +7,13 @@ import com.example.university.dto.response.StudentResponse;
 import com.example.university.feignclients.AddressFeignClient;
 import com.example.university.repository.StudentRepository;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+@Slf4j
 @Service
 public class StudentService {
 
@@ -38,6 +40,8 @@ public class StudentService {
 
     @Transactional
     public StudentResponse getById(long id) {
+        log.info("Inside Student getById");
+
         Student student = studentRepository.findById(id).get();
         StudentResponse studentResponse = new StudentResponse(student);
         studentResponse.setAddressResponse(commonService.getAddressById(student.getAddressId()));
