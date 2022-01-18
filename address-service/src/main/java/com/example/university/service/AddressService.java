@@ -5,6 +5,7 @@ import com.example.university.dto.request.CreateAddressRequest;
 import com.example.university.dto.response.AddressResponse;
 import com.example.university.repository.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

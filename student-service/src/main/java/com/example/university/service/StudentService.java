@@ -4,10 +4,11 @@ import com.example.university.domain.Student;
 import com.example.university.dto.request.CreateStudentRequest;
 import com.example.university.dto.response.AddressResponse;
 import com.example.university.dto.response.StudentResponse;
+import com.example.university.feignclients.AddressFeignClient;
 import com.example.university.repository.StudentRepository;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.transaction.Transactional;
 
@@ -18,7 +19,7 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     @Autowired
-    private WebClient webClient;
+    private AddressFeignClient addressFeignClient;
 
     @Transactional
     public StudentResponse createStudent(CreateStudentRequest request) {
@@ -43,12 +44,9 @@ public class StudentService {
         return studentResponse;
     }
 
+    @CircuitBreaker(name = "addressService")
     public AddressResponse getAddressById(long addressId) {
-        return webClient.get()
-                .uri("/getById/" + addressId)
-                .retrieve()
-                .bodyToMono(AddressResponse.class)
-                .block();
+        return addressFeignClient.getById(addressId);
     }
 
     @Transactional
