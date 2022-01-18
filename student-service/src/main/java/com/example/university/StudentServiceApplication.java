@@ -3,36 +3,29 @@ package com.example.university;
 import com.example.university.dto.request.CreateStudentRequest;
 import com.example.university.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.reactive.function.client.WebClient;
 
 @SpringBootApplication
-public class StudentServiceApplication implements CommandLineRunner {
+public class StudentServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(StudentServiceApplication.class, args);
 	}
 
-	@Autowired
-	private StudentService studentService;
+	@Value("${address.service.url}")
+	private String addressServiceUrl;
 
-	@Override
-	public void run(String... args) throws Exception {
-		CreateStudentRequest s1 = new CreateStudentRequest();
-		s1.setStreet("sanbon");
-		s1.setCity("gunpo");
-		s1.setFirstName("dongki");
-		s1.setLastName("kam");
-		s1.setEmail("kam.dongki@bbb.com");
-		studentService.createStudent(s1);
+	@Bean
+	public WebClient webClient() {
+		WebClient webClient = WebClient.builder()
+				.baseUrl(addressServiceUrl)
+				.build();
 
-		CreateStudentRequest s2 = new CreateStudentRequest();
-		s2.setStreet("st2");
-		s2.setCity("ct2");
-		s2.setFirstName("fn2");
-		s2.setLastName("ln2");
-		s2.setEmail("em2");
-		studentService.createStudent(s2);
+		return webClient;
 	}
 }
