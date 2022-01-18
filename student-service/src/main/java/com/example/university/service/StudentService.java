@@ -19,7 +19,7 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     @Autowired
-    private AddressFeignClient addressFeignClient;
+    private CommonService commonService;
 
     @Transactional
     public StudentResponse createStudent(CreateStudentRequest request) {
@@ -31,7 +31,7 @@ public class StudentService {
         student = studentRepository.save(student);
 
         StudentResponse studentResponse = new StudentResponse(student);
-        studentResponse.setAddressResponse(getAddressById(student.getAddressId()));
+        studentResponse.setAddressResponse(commonService.getAddressById(student.getAddressId()));
 
         return studentResponse;
     }
@@ -40,13 +40,8 @@ public class StudentService {
     public StudentResponse getById(long id) {
         Student student = studentRepository.findById(id).get();
         StudentResponse studentResponse = new StudentResponse(student);
-        studentResponse.setAddressResponse(getAddressById(student.getAddressId()));
+        studentResponse.setAddressResponse(commonService.getAddressById(student.getAddressId()));
         return studentResponse;
-    }
-
-    @CircuitBreaker(name = "addressService")
-    public AddressResponse getAddressById(long addressId) {
-        return addressFeignClient.getById(addressId);
     }
 
     @Transactional
