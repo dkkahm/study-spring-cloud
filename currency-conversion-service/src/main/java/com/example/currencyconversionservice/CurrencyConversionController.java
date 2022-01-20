@@ -14,10 +14,19 @@ public class CurrencyConversionController {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private CurrencyExchangeProxy currencyExchangeProxy;
+
     @GetMapping("/currency-conversion/from/{from}/to/{to}/quantity/{quantity}")
     public CurrencyConversion retrieveExchangeValue(@PathVariable String from,
                                                     @PathVariable String to,
                                                     @PathVariable BigDecimal quantity) {
-        return new CurrencyConversion(100L, from, to, BigDecimal.valueOf(65), quantity, quantity, "aaa");
+
+        CurrencyConversion currencyConversion = currencyExchangeProxy.retrieveExchangeValue(from, to);
+
+        return new CurrencyConversion(currencyConversion.getId(),
+                from, to, currencyConversion.getConversionMultiple(),
+                quantity, quantity.multiply(currencyConversion.getConversionMultiple()),
+                currencyConversion.getEnvironment());
     }
 }
